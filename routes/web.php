@@ -1,25 +1,27 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\User;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+    return Inertia::render('Welcome');
+})->name('welcome');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(middleware: ['auth', 'verified'])->name('dashboard');
+    $id = Auth::user()->id;
+    return Inertia::render('Dashboard', ['user' => User::findOrFail($id)]);
+})
+    ->middleware(middleware: ['auth', 'verified'])
+    ->name('dashboard');
 Route::get('/report', function () {
     return Inertia::render('Report');
-})->middleware(['auth', 'verified'])->name('report');
+})
+    ->middleware(['auth', 'verified'])
+    ->name('report');
 
 
 Route::middleware('auth')->group(function () {

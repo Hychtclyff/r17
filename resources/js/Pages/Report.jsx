@@ -5,11 +5,17 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { useRef, useState } from "react";
 
 export default function Dashboard() {
     const [alertActive, setAlertActive] = useState(false);
+    const { data, setData, post, patch, errors, reset } = useForm({
+        topic: "",
+        reportContent: "",
+        attachment: "",
+        location: "",
+    });
     const closeModal = () => {
         setAlertActive(false);
 
@@ -70,67 +76,87 @@ export default function Dashboard() {
                                 <div className="container mx-auto px-10 flex flex-col   ">
                                     <div className="mt-4">
                                         <InputLabel
-                                            htmlFor="judul_laporan"
-                                            value="Judul_laporan"
+                                            htmlFor="topic"
+                                            value="Judul Laporan"
                                             className="text-2xl"
                                         />
-
                                         <TextInput
-                                            id="judul_laporan"
+                                            id="topic"
                                             type="text"
-                                            name="judul_laporan"
-                                            value=""
-                                            className="mt-1 block w-full "
-                                            autoComplete="current-judul_laporan"
+                                            name="topic"
+                                            value={data.topic}
+                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                                            autoComplete="current-topic"
+                                            onChange={(e) =>
+                                                setData("topic", e.target.value)
+                                            }
                                         />
                                     </div>
+
                                     <div className="mt-4">
                                         <InputLabel
-                                            htmlFor="judul_laporan"
-                                            value="Judul_laporan"
+                                            htmlFor="reportContent"
+                                            value="Isi Laporan"
                                             className="text-2xl"
                                         />
                                         <textarea
-                                            id="judul_laporan"
-                                            type="text"
-                                            name="judul_laporan"
-                                            value=""
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-44     "
-                                            autoComplete="current-judul_laporan"
-                                        ></textarea>
+                                            id="reportContent"
+                                            name="reportContent"
+                                            value={data.reportContent}
+                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-44"
+                                            autoComplete="current-reportContent"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "reportContent",
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
                                     </div>
+
                                     <div className="mt-4">
                                         <InputLabel
-                                            htmlFor="lampiran"
+                                            htmlFor="attachment"
                                             value="Lampiran"
                                             className="text-2xl"
                                         />
-
                                         <TextInput
-                                            id="lampiran"
-                                            type="File"
-                                            name="lampiran"
-                                            value=""
-                                            className="mt-1 block w-full py-5 "
-                                            autoComplete="current-judul_laporan"
+                                            id="attachment"
+                                            type="file"
+                                            name="attachment"
+                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl py-5"
+                                            autoComplete="current-attachment"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "attachment",
+                                                    e.target.value
+                                                )
+                                            }
                                         />
                                     </div>
+
                                     <div className="mt-4">
                                         <InputLabel
-                                            htmlFor="lokasi"
+                                            htmlFor="location"
                                             value="Lokasi"
                                             className="text-2xl"
                                         />
-
                                         <TextInput
-                                            id="lokasi"
+                                            id="location"
                                             type="text"
-                                            name="lokasi"
-                                            value=""
-                                            className="mt-1 block w-full  "
-                                            autoComplete="current-judul_laporan"
+                                            name="location"
+                                            value={data.location}
+                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                                            autoComplete="current-location"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "location",
+                                                    e.target.value
+                                                )
+                                            }
                                         />
                                     </div>
+
                                     <div className="mt-4 flex items-center justify-center ">
                                         <PrimaryButton
                                             className=" w-full text-center flex justify-center text-xl py-10 "

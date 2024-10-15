@@ -32,13 +32,17 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'password' => ['required',  Rules\Password::defaults()],
+            'handphone' => 'required|string|max:15', // Atur panjang maksimal sesuai kebutuhan
+            'gender' => 'required|in:Laki-Laki,Perempuan',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'handphone' => $request->handphone,
+            'gender' => $request->gender,
             'password' => Hash::make($request->password),
         ]);
 
@@ -46,6 +50,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return back();
     }
 }

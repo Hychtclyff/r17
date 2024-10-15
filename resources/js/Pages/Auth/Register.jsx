@@ -1,35 +1,36 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import Modal from "@/Components/Modal";
+import PrimaryButton from "@/Components/PrimaryButton";
+import SelectInput from "@/Components/SelectInput";
+import TextInput from "@/Components/TextInput";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        name: "",
+        email: "",
+        password: "",
+        handphone: "",
+        gender: "",
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
+        post(route("register"), {
+            onFinish: () => {
+                setAlertActive(true);
+                reset("password");
+            },
         });
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout className="w-2/6 p-20 px-24">
             <Head title="Register" />
-
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
 
             <form
                 onSubmit={submit}
@@ -39,20 +40,20 @@ export default function Register() {
                     Regsiter
                 </span>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="name" value="Nama" />
 
                     <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
+                        id="name"
+                        type="text"
+                        name="name"
+                        value={data.name}
+                        className="mt-1 block w-full min-h-14 text-2xl  rounded-xl"
                         autoComplete="username"
                         isFocused={true}
-                        onChange={(e) => setData("email", e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError message={errors.name} className="mt-2" />
                 </div>
 
                 <div>
@@ -63,13 +64,46 @@ export default function Register() {
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData("email", e.target.value)}
                     />
 
                     <InputError message={errors.email} className="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="gender" value="Jenis Kelamin" />
+                    <SelectInput
+                        id="gender"
+                        name="gender"
+                        value={data.gender}
+                        className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                        onChange={(e) => setData("gender", e.target.value)}
+                    >
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option value="Laki-Laki">Laki-Laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </SelectInput>
+                    <InputError message={errors.gender} className="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="handphone" value="Handphone" />
+
+                    <TextInput
+                        id="handphone"
+                        type="text"
+                        name="handphone"
+                        value={data.handphone}
+                        className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                        autoComplete="username"
+                        isFocused={true}
+                        onChange={(e) => setData("handphone", e.target.value)}
+                    />
+
+                    <InputError message={errors.handphone} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
@@ -80,7 +114,7 @@ export default function Register() {
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full min-h-14 text-2xl  rounded-xl"
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
                     />
@@ -88,16 +122,14 @@ export default function Register() {
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-
                 <div className="mt-4 flex items-center justify-center ">
                     <PrimaryButton
                         className=" w-full text-center flex justify-center "
                         disabled={processing}
                     >
-                        Log in
+                        Register
                     </PrimaryButton>
                 </div>
-               
             </form>
         </GuestLayout>
     );

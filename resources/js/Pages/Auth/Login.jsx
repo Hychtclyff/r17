@@ -22,7 +22,7 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout className="w-2/6 p-20 px-24">
             <Head title="Log in" />
 
             {status && (
@@ -33,7 +33,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form
                 onSubmit={submit}
-                className="flex flex-col gap-3 justify-center p-10 "
+                className="flex flex-col gap-1 justify-center p-10 text-2xl"
             >
                 <span className="text-center text-5xl font-extrabold ">
                     Login
@@ -46,7 +46,7 @@ export default function Login({ status, canResetPassword }) {
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full min-h-14 text-2xl  rounded-xl "
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData("email", e.target.value)}
@@ -63,35 +63,12 @@ export default function Login({ status, canResetPassword }) {
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full min-h-14 text-2xl  rounded-xl"
                         autoComplete="current-password"
                         onChange={(e) => setData("password", e.target.value)}
                     />
 
                     <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 flex justify-between">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData("remember", e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                    {canResetPassword && (
-                        <Link
-                            href={route("password.request")}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
                 </div>
 
                 <div className="mt-4 flex items-center justify-center ">
@@ -102,7 +79,7 @@ export default function Login({ status, canResetPassword }) {
                         Log in
                     </PrimaryButton>
                 </div>
-                <div className="flex justify-around">
+                <div className="flex justify-between">
                     <span>Sudah Punya Akun?</span>
                     <a href={route("register")} className="text-primary_600 ">
                         Daftar Dulu
