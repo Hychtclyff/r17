@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,3 +62,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/report', [ReportController::class, 'store'])
         ->name('report.store');
 });
+
+Route::patch('/adminReport/{report}', [ReportController::class, 'update'])->name('report.update');
+

@@ -64,7 +64,9 @@ class ReportController extends Controller
      */
     public function update(UpdateReportRequest $request, Report $report)
     {
-        //
+        $report->update($request->validated());
+
+        return back();
     }
 
     /**

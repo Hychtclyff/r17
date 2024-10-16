@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('topic');
             $table->text('reportContent');
             $table->string('location');
+            $table->enum('status', ['baru', 'proses', 'diterima', 'tolak', 'selesai'])->default('baru');
             $table->string('attachment')->nullable();
             $table->timestamps();
         });

@@ -13,6 +13,7 @@ class Report extends Model
         'topic',
         'reportContent',
         'location',
-        'attachment'
+        'attachment',
+        'status'
     ];
 }
