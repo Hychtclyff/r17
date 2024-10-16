@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -17,11 +18,9 @@ Route::get('/dashboard', function () {
 })
     ->middleware(middleware: ['auth', 'verified'])
     ->name('dashboard');
-Route::get('/report', function () {
-    return Inertia::render('Report');
-})
+Route::get('/report', [ReportController::class, 'index'])
     ->middleware(['auth', 'verified'])
-    ->name('report');
+    ->name('report.index');
 
 
 Route::middleware('auth')->group(function () {

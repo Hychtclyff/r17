@@ -8,8 +8,7 @@ import { useState } from "react";
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    const { url } = usePage();
 
     return (
         <div className="min-h-screen ">
@@ -49,8 +48,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <span>Home</span>
                                 </a>
                             </li>
-                            <li className="flex flex-col justify-center items-center">
-                                <a href={route("report")}>
+                            <li className="flex flex-col justify-center items-center text-center">
+                                <a href={route("report.index")}>
                                     <svg
                                         width="50"
                                         height="50"
@@ -60,36 +59,60 @@ export default function AuthenticatedLayout({ header, children }) {
                                     >
                                         <path
                                             d="M9 13.5L15 13.5"
-                                            stroke="#D2D2D2"
+                                            stroke={
+                                                url == "/report"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                             stroke-width="2"
                                             stroke-linecap="round"
                                         />
                                         <path
                                             d="M9 9.5L13 9.5"
-                                            stroke="#D2D2D2"
+                                            stroke={
+                                                url == "/report"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                             stroke-width="2"
                                             stroke-linecap="round"
                                         />
                                         <path
                                             d="M9 17.5L13 17.5"
-                                            stroke="#D2D2D2"
+                                            stroke={
+                                                url == "/report"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                             stroke-width="2"
                                             stroke-linecap="round"
                                         />
                                         <path
                                             d="M19 13.5V15.5C19 18.3284 19 19.7426 18.1213 20.6213C17.2426 21.5 15.8284 21.5 13 21.5H11C8.17157 21.5 6.75736 21.5 5.87868 20.6213C5 19.7426 5 18.3284 5 15.5V9.5C5 6.67157 5 5.25736 5.87868 4.37868C6.75736 3.5 8.17157 3.5 11 3.5V3.5"
-                                            stroke="#D2D2D2"
+                                            stroke={
+                                                url == "/report"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                             stroke-width="2"
                                         />
                                         <path
                                             d="M18 3.5L18 9.5"
-                                            stroke="#D2D2D2"
+                                            stroke={
+                                                url == "/report"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                             stroke-width="2"
                                             stroke-linecap="round"
                                         />
                                         <path
                                             d="M21 6.5L15 6.5"
-                                            stroke="#D2D2D2"
+                                            stroke={
+                                                url == "/report"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                             stroke-width="2"
                                             stroke-linecap="round"
                                         />
@@ -111,7 +134,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                             fill-rule="evenodd"
                                             clip-rule="evenodd"
                                             d="M17.0734 6.98734C17.0734 9.80199 14.8166 12.0589 12 12.0589C9.18431 12.0589 6.92659 9.80199 6.92659 6.98734C6.92659 4.17269 9.18431 1.91675 12 1.91675C14.8166 1.91675 17.0734 4.17269 17.0734 6.98734ZM12 21.0834C7.8431 21.0834 4.33333 20.4078 4.33333 17.8011C4.33333 15.1934 7.86515 14.5418 12 14.5418C16.1578 14.5418 19.6667 15.2174 19.6667 17.8241C19.6667 20.4317 16.1348 21.0834 12 21.0834Z"
-                                            fill="#13AC8A"
+                                            fill={
+                                                url == "/dashboard"
+                                                    ? "#13AC8A"
+                                                    : "#D2D2D2"
+                                            }
                                         />
                                     </svg>
 

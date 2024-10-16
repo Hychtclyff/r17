@@ -1,4 +1,5 @@
 import DangerButton from "@/Components/DangerButton";
+import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -23,8 +24,9 @@ export default function Dashboard() {
         reset();
     };
 
-    const confirmUserDeletion = () => {
-        setAlertActive(true);
+    const sendReport = (e) => {
+        e.preventDefault();
+        post(route("report.store"), { onSuccess: () => setAlertActive(true) });
     };
 
     return (
@@ -73,7 +75,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="bio">
-                                <div className="container mx-auto px-10 flex flex-col   ">
+                                <div className="container mx-auto px-10 flex flex-col ">
                                     <div className="mt-4">
                                         <InputLabel
                                             htmlFor="topic"
@@ -90,6 +92,10 @@ export default function Dashboard() {
                                             onChange={(e) =>
                                                 setData("topic", e.target.value)
                                             }
+                                        />
+                                        <InputError
+                                            message={errors.topic}
+                                            className="mt-2"
                                         />
                                     </div>
 
@@ -112,6 +118,10 @@ export default function Dashboard() {
                                                 )
                                             }
                                         />
+                                        <InputError
+                                            message={errors.reportContent}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div className="mt-4">
@@ -132,6 +142,10 @@ export default function Dashboard() {
                                                     e.target.value
                                                 )
                                             }
+                                        />
+                                        <InputError
+                                            message={errors.attachment}
+                                            className="mt-2"
                                         />
                                     </div>
 
@@ -155,14 +169,17 @@ export default function Dashboard() {
                                                 )
                                             }
                                         />
+                                        <InputError
+                                            message={errors.location}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div className="mt-4 flex items-center justify-center ">
                                         <PrimaryButton
                                             className=" w-full text-center flex justify-center text-xl py-10 "
-                                            // disabled={processing}
-                                            ocClick={() => {
-                                                alertActive();
+                                            onClick={(e) => {
+                                                sendReport(e);
                                             }}
                                         >
                                             Simpan
@@ -183,38 +200,13 @@ export default function Dashboard() {
                                     silahkan cek laporan secara berkala
                                 </p>
 
-                                {/* <div className="mt-6">
-                                    <InputLabel
-                                        htmlFor="password"
-                                        value="Password"
-                                        className="sr-only"
-                                    />
-
-                                    <TextInput
-                                        id="password"
-                                        type="password"
-                                        name="password"
-                                        ref={passwordInput}
-                                        value={data.password}
-                                        onChange={(e) =>
-                                            setData("password", e.target.value)
-                                        }
-                                        className="mt-1 block w-3/4"
-                                        isFocused
-                                        placeholder="Password"
-                                    />
-
-                                    <InputError
-                                        message={errors.password}
-                                        className="mt-2"
-                                    />
-                                </div>
-
-                                */}
                                 <div className=" w-full text-center flex justify-center text-xl ">
                                     <PrimaryButton
                                         className=" w-full text-center flex justify-center text-xl py-5 "
-                                        // disabled={processing}
+                                        onClick={(e) => {
+                                            setAlertActive(false);
+                                            reset();
+                                        }}
                                     >
                                         ok
                                     </PrimaryButton>
