@@ -479,11 +479,11 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
                         <ul className="flex gap-6">
                             <li>
                                 <button
-                                    onClick={() =>
-                                        patch(route("report.update", data.id), {
-                                            status: "proses",
-                                        })
-                                    }
+                                    // onClick={() =>
+                                    //     patch(route("report.update", data.id), {
+                                    //         status: "proses",
+                                    //     })
+                                    // }
                                     className="py-2 px-5 bg-[#cc7914] hover:bg-[#cc7914]/50 transition shadow-md text-white rounded-xl"
                                 >
                                     proses
