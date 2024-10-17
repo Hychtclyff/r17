@@ -49,10 +49,14 @@ class ReportController extends Controller
 
         // Menangani penyimpanan file lampiran jika ada
         if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
-            $attachmentName = time() . '_attachment.' . $attachment->extension(); // Mengatur nama file
-            $attachment->move(public_path('img/lampiran/'), $attachmentName); // Pindahkan file ke folder yang diinginkan
-            $validatedData['attachment'] = 'img/lampiran/' . $attachmentName; // Simpan path di database
+            try {
+                $attachment = $request->file('attachment');
+                $attachmentName = time() . '_attachment.' . $attachment->extension();
+                $attachment->move(public_path('/img/lampiran'), $attachmentName);
+                $validatedData['attachment'] = '/img/lampiran/' . $attachmentName;
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Upload failed: ' . $e->getMessage()], 500);
+            }
         }
 
         // Membuat laporan baru

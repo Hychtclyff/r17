@@ -872,7 +872,7 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
                                 <tr>
                                     <td>
                                         <img
-                                            src={`/${data.attachment}`}
+                                            src={`${data.attachment}`}
                                             alt=""
                                             className="h-auto w-52"
                                         />
