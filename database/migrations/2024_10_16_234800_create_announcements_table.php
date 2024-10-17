@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reports', function (Blueprint $table) {
+
+        Schema::create('announcements', function (Blueprint $table) {
             $table->id();
+            $table->text('announcement');
             $table->string('topic');
-            $table->string('user');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->text('reportContent');
-            $table->string('location');
-            $table->enum('status', ['baru', 'proses', 'diterima', 'tolak', 'selesai'])->default('baru');
-            $table->string('attachment')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reports');
+        Schema::dropIfExists('announcements');
     }
 };

@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Models\Announcements;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Foundation\Application;
@@ -12,7 +14,23 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    // Cek apakah pengguna sudah login
+    if (Auth::check()) {
+        $user = Auth::user(); // Ambil pengguna yang sedang login
+        return Inertia::render('Welcome', [
+            'user' => $user,
+            'report' => $user->reports,
+            'announcements' => Announcements::all(),
+
+        ]);
+    }
+
+    // Jika pengguna tidak login, kembalikan view tanpa data pengguna dan laporan
+    return Inertia::render('Welcome', [
+        'user' => '',
+        'report' => [],
+        'announcements' => Announcements::all(),
+    ]);
 })->name('welcome');
 
 Route::get('/dashboard', function () {
@@ -41,7 +59,14 @@ Route::get('/admin', function () {
         'diterima' => Report::where('status', 'diterima')->count(),
         'selesai' => Report::where('status', 'selesai')->count(),
         'dataLaporan' => Report::all(),
+        'dataWarga' => User::all(),
+        'announcementData' => Announcements::all(),
     ]);
-})->middleware(AdminMiddleware::class);
+})->middleware(AdminMiddleware::class)->name('admin.index');
+Route::post('/create', [RegisteredUserController::class, 'store'])->name('adminCreate');
+Route::delete('/admin/delete/{id}', [ProfileController::class, 'destroyAdmin'])->name('deleteAcc');
+
+
+
 
 require __DIR__ . '/auth.php';

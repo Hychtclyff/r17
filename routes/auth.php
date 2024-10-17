@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -61,7 +62,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/report', [ReportController::class, 'store'])
         ->name('report.store');
-});
+    Route::patch('/adminReport/{id}/{update}', [ReportController::class, 'update'])->name('report.update');
 
-Route::patch('/adminReport/{report}', [ReportController::class, 'update'])->name('report.update');
+
+    Route::post('announcement/create', [AnnouncementsController::class, 'store'])->name('announcement.store');
+    Route::put('announcement/update/id={id}', [AnnouncementsController::class, 'update'])->name('announcement.update');
+    Route::delete('announcement/delete/id={id}', [AnnouncementsController::class, 'destroy'])->name('announcement.destroy');
+});
 

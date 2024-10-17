@@ -14,6 +14,14 @@ class Report extends Model
         'reportContent',
         'location',
         'attachment',
-        'status'
+        'status',
+        'user',
+        'user_id'
+
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

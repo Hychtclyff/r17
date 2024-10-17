@@ -73,145 +73,150 @@ export default function Dashboard() {
                                 </div>
                                 <div className=" left-0"></div>
                             </div>
+                            <form enctype="multipart/form-data">
+                                <div className="bio">
+                                    <div className="container mx-auto px-10 flex flex-col ">
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="topic"
+                                                value="Judul Laporan"
+                                                className="text-2xl"
+                                            />
+                                            <TextInput
+                                                id="topic"
+                                                type="text"
+                                                name="topic"
+                                                value={data.topic}
+                                                className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                                                autoComplete="current-topic"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "topic",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.topic}
+                                                className="mt-2"
+                                            />
+                                        </div>
 
-                            <div className="bio">
-                                <div className="container mx-auto px-10 flex flex-col ">
-                                    <div className="mt-4">
-                                        <InputLabel
-                                            htmlFor="topic"
-                                            value="Judul Laporan"
-                                            className="text-2xl"
-                                        />
-                                        <TextInput
-                                            id="topic"
-                                            type="text"
-                                            name="topic"
-                                            value={data.topic}
-                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
-                                            autoComplete="current-topic"
-                                            onChange={(e) =>
-                                                setData("topic", e.target.value)
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.topic}
-                                            className="mt-2"
-                                        />
-                                    </div>
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="reportContent"
+                                                value="Isi Laporan"
+                                                className="text-2xl"
+                                            />
+                                            <textarea
+                                                id="reportContent"
+                                                name="reportContent"
+                                                value={data.reportContent}
+                                                className="mt-1 block w-full min-h-14 text-2xl rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-44"
+                                                autoComplete="current-reportContent"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "reportContent",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.reportContent}
+                                                className="mt-2"
+                                            />
+                                        </div>
 
-                                    <div className="mt-4">
-                                        <InputLabel
-                                            htmlFor="reportContent"
-                                            value="Isi Laporan"
-                                            className="text-2xl"
-                                        />
-                                        <textarea
-                                            id="reportContent"
-                                            name="reportContent"
-                                            value={data.reportContent}
-                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-44"
-                                            autoComplete="current-reportContent"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "reportContent",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.reportContent}
-                                            className="mt-2"
-                                        />
-                                    </div>
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="attachment"
+                                                value="Lampiran"
+                                                className="text-2xl"
+                                            />
+                                            <TextInput
+                                                id="attachment"
+                                                type="file"
+                                                name="attachment"
+                                                className="mt-1 block w-full min-h-14 text-2xl rounded-xl py-5"
+                                                autoComplete="current-attachment"
+                                                accept="image/*,application/pdf" // Batasi jenis file yang bisa diupload
+                                                onChange={(e) => {
+                                                    setData(
+                                                        "attachment",
+                                                        e.target.files[0]
+                                                    ); // Menggunakan e.target.files[0]
+                                                }}
+                                            />
+                                            <InputError
+                                                message={errors.attachment}
+                                                className="mt-2"
+                                            />
+                                        </div>
 
-                                    <div className="mt-4">
-                                        <InputLabel
-                                            htmlFor="attachment"
-                                            value="Lampiran"
-                                            className="text-2xl"
-                                        />
-                                        <TextInput
-                                            id="attachment"
-                                            type="file"
-                                            name="attachment"
-                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl py-5"
-                                            autoComplete="current-attachment"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "attachment",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.attachment}
-                                            className="mt-2"
-                                        />
-                                    </div>
+                                        <div className="mt-4">
+                                            <InputLabel
+                                                htmlFor="location"
+                                                value="Lokasi"
+                                                className="text-2xl"
+                                            />
+                                            <TextInput
+                                                id="location"
+                                                type="text"
+                                                name="location"
+                                                value={data.location}
+                                                className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                                                autoComplete="current-location"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "location",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.location}
+                                                className="mt-2"
+                                            />
+                                        </div>
 
-                                    <div className="mt-4">
-                                        <InputLabel
-                                            htmlFor="location"
-                                            value="Lokasi"
-                                            className="text-2xl"
-                                        />
-                                        <TextInput
-                                            id="location"
-                                            type="text"
-                                            name="location"
-                                            value={data.location}
-                                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
-                                            autoComplete="current-location"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "location",
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <InputError
-                                            message={errors.location}
-                                            className="mt-2"
-                                        />
-                                    </div>
-
-                                    <div className="mt-4 flex items-center justify-center ">
-                                        <PrimaryButton
-                                            className=" w-full text-center flex justify-center text-xl py-10 "
-                                            onClick={(e) => {
-                                                sendReport(e);
-                                            }}
-                                        >
-                                            Simpan
-                                        </PrimaryButton>
+                                        <div className="mt-4 flex items-center justify-center ">
+                                            <PrimaryButton
+                                                className=" w-full text-center flex justify-center text-xl py-10 "
+                                                onClick={(e) => {
+                                                    sendReport(e);
+                                                }}
+                                            >
+                                                Simpan
+                                            </PrimaryButton>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </main>
                         <Modal show={alertActive} onClose={closeModal}>
-                            <div className="p-6 flex flex-col  items-center gap-5">
-                                <img src="/img/auth.png" alt="" />
+                        <div className="p-6 flex flex-col  items-center gap-5">
+                            <img src="/img/auth.png" alt="" />
 
-                                <h2 className="text-lg font-medium text-gray-900">
-                                    Laporan Berhasil di Ajukan
-                                </h2>
+                            <h2 className="text-lg font-medium text-gray-900">
+                                Laporan Berhasil di Ajukan
+                            </h2>
 
-                                <p className="mt-1 text-sm text-gray-600">
-                                    silahkan cek laporan secara berkala
-                                </p>
+                            <p className="mt-1 text-sm text-gray-600">
+                                silahkan cek laporan secara berkala
+                            </p>
 
-                                <div className=" w-full text-center flex justify-center text-xl ">
-                                    <PrimaryButton
-                                        className=" w-full text-center flex justify-center text-xl py-5 "
-                                        onClick={(e) => {
-                                            setAlertActive(false);
-                                            reset();
-                                        }}
-                                    >
-                                        ok
-                                    </PrimaryButton>
-                                </div>
+                            <div className=" w-full text-center flex justify-center text-xl ">
+                                <PrimaryButton
+                                    className=" w-full text-center flex justify-center text-xl py-5 "
+                                    onClick={(e) => {
+                                        setAlertActive(false);
+                                        reset();
+                                    }}
+                                >
+                                    ok
+                                </PrimaryButton>
                             </div>
+                        </div>
                         </Modal>
                     </div>
                 </div>

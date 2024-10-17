@@ -6,6 +6,7 @@ use App\Models\Report;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Requests\UpdateReportRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ReportController extends Controller
@@ -31,6 +32,9 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user()->name;
+        $id = Auth::user()->id;
+
         $validatedData = $request->validate([
             'topic' => 'required|string|max:255',
             'reportContent' => 'required|string',
@@ -38,10 +42,26 @@ class ReportController extends Controller
             'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
         ]);
 
+        // Menambahkan nama pengguna ke data yang sudah divalidasi
+        $validatedData['user'] = $user;
+        $validatedData['user_id'] = $id;
+
+
+        // Menangani penyimpanan file lampiran jika ada
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            $attachmentName = time() . '_attachment.' . $attachment->extension(); // Mengatur nama file
+            $attachment->move(public_path('img/lampiran'), $attachmentName); // Pindahkan file ke folder yang diinginkan
+            $validatedData['attachment'] = 'img/lampiran/' . $attachmentName; // Simpan path di database
+        }
+
+        // Membuat laporan baru
         Report::create($validatedData);
 
-        return back();
+        // Menyimpan pesan flash untuk feedback
+        return back()->with('success', 'Laporan berhasil disimpan.');
     }
+
 
     /**
      * Display the specified resource.
@@ -62,11 +82,19 @@ class ReportController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateReportRequest $request, Report $report)
+    public function update(Request $request, $id, $update)
     {
-        $report->update($request->validated());
 
-        return back();
+
+        $row = Report::findOrFail($id);
+
+
+        $row->status = $update;
+        $row->save();
+
+
+        // Kembalikan ke halaman sebelumnya dengan pesan sukses
+        return back()->with('success', 'Report updated successfully');
     }
 
     /**

@@ -3,6 +3,12 @@ import DangerButton from "@/Components/DangerButton";
 import Dropdown from "@/Components/Dropdown";
 import { Head, useForm } from "@inertiajs/react";
 import { Children, useState } from "react";
+import Modal from "@/Components/Modal";
+import PrimaryButton from "@/Components/PrimaryButton";
+import InputLabel from "@/Components/InputLabel";
+import TextInput from "@/Components/TextInput";
+import SelectInput from "@/Components/SelectInput";
+import InputError from "@/Components/InputError";
 
 export default function Main({
     baru,
@@ -11,10 +17,13 @@ export default function Main({
     ditolak,
     selesai,
     dataLaporan,
+    dataWarga,
+    announcementData,
 }) {
     const [dashboard, setDashboard] = useState(true);
     const [laporan, setLaporan] = useState(false);
     const [pengguna, setPengguna] = useState(false);
+    const [pengumuman, setPengumuman] = useState(false);
 
     return (
         <>
@@ -22,14 +31,17 @@ export default function Main({
                 <Head title="Dashboard" />
 
                 <SideBar
+                    pengumuman={pengumuman}
                     dashboard={dashboard}
                     laporan={laporan}
                     pengguna={pengguna}
                     setDashboard={setDashboard}
                     setLaporan={setLaporan}
                     setPengguna={setPengguna}
+                    setPengumuman={setPengumuman}
                 />
                 <PanelScreen
+                    dataWarga={dataWarga}
                     dataLaporan={dataLaporan}
                     baru={baru}
                     proses={proses}
@@ -39,6 +51,8 @@ export default function Main({
                     dashboard={dashboard}
                     laporan={laporan}
                     pengguna={pengguna}
+                    pengumuman={pengumuman}
+                    announcementData={announcementData}
                 />
             </div>
         </>
@@ -46,6 +60,7 @@ export default function Main({
 }
 
 const SideBar = ({
+    setPengumuman,
     setDashboard,
     setLaporan,
     setPengguna,
@@ -57,6 +72,7 @@ const SideBar = ({
         setDashboard(false);
         setPengguna(false);
         setLaporan(false);
+        setPengumuman(false);
     };
 
     return (
@@ -217,13 +233,27 @@ const SideBar = ({
                                         <span>Data Pengguna</span>
                                     </button>
                                 </li>
+                                <li>
+                                    <button
+                                        onClick={() => {
+                                            offAll();
+                                            setPengumuman(true);
+                                        }}
+                                        className=" flex py-5  items-center w-full rounded-3xl     text-3xl justify-center gap-4 hover:bg-primary_500 transition shadow-lg "
+                                    >
+                                        <span>Pengemuman</span>
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </main>
                 <footer>
                     <div className="logout absolute bottom-0 left-0 w-1/6 p-5">
-                        <button className=" flex py-5  items-center w-full rounded-3xl     text-3xl justify-center gap-4 hover:bg-primary_500 transition shadow-lg ">
+                        <button
+                            onClick={() => post(route("logout"))}
+                            className=" flex py-5  items-center w-full rounded-3xl     text-3xl justify-center gap-4 hover:bg-primary_500 transition shadow-lg "
+                        >
                             <svg
                                 width="50"
                                 height="50"
@@ -251,6 +281,7 @@ const SideBar = ({
 };
 
 const PanelScreen = ({
+    pengumuman,
     dashboard,
     laporan,
     pengguna,
@@ -260,6 +291,8 @@ const PanelScreen = ({
     ditolak,
     selesai,
     dataLaporan,
+    dataWarga,
+    announcementData,
 }) => {
     return (
         <>
@@ -275,7 +308,10 @@ const PanelScreen = ({
                 )}
 
                 {laporan && <KelolaLaporan dataLaporan={dataLaporan} />}
-                {pengguna && <KelolaPengguna />}
+                {pengguna && <KelolaPengguna dataWarga={dataWarga} />}
+                {pengumuman && (
+                    <KelolaPengumuman announcementData={announcementData} />
+                )}
             </div>
         </>
     );
@@ -396,9 +432,359 @@ const ScreenDashboard = ({
     );
 };
 
+const KelolaPengumuman = ({ announcementData }) => {
+    const [alert, setAlert] = useState(false);
+    const {
+        data,
+        setData,
+        post,
+        get,
+        delete: destroye,
+        put,
+        processing,
+        errors,
+        reset,
+    } = useForm({
+        id: "",
+        announcement: "",
+        topic: "",
+        path_img: "",
+    });
+    const [modal, setModal] = useState(0);
+
+    const [idTarget, setIdTarget] = useState("");
+
+    const alertActive = () => {
+        setAlert(true);
+    };
+    const closeModal = () => {
+        setAlert(false);
+
+        reset();
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+        if (modal == 1) {
+            post(route("announcement.store"), {
+                onSuccess: () => {
+                    alertActive();
+                },
+                onError: (errors) => {
+                    console.error("Validasi gagal:", errors);
+                },
+            });
+        }
+        if (modal == 2) {
+            put(route("announcement.update", idTarget), {
+                onSuccess: () => {
+                    alertActive();
+                },
+                onError: (errors) => {
+                    console.error("Validasi gagal:", errors);
+                },
+            });
+        }
+        if (modal == 3) {
+            destroye(route("announcement.destroy", idTarget), {
+                onSuccess: () => {
+                    closeModal();
+                    setModal(4);
+                    alertActive();
+                },
+                onError: (errors) => {
+                    console.error("Validasi gagal:", errors);
+                },
+            });
+        }
+    };
+
+    const updateAnnunce = (e, id) => {
+        // e.preventDefault();
+        setIdTarget(id);
+        const newData = announcementData.find((e) => e.id == id);
+        if (!newData) {
+            return;
+        }
+
+        setData({
+            announcement: newData.announcement,
+            topic: newData.topic,
+
+            id: newData.id,
+        });
+    };
+    return (
+        <>
+            <div className="container ">
+                <form onSubmit={submit}>
+                    <div className="flex flex-col justify-center">
+                        <div className="flex gap-10 justify-start my-2">
+                            <InputLabel
+                                className="flex items-center justify-center w-1/4 text-lg"
+                                htmlFor="topic"
+                                value="Topic"
+                            />
+                            <TextInput
+                                id="topic"
+                                type="text"
+                                name="topic"
+                                value={data.topic}
+                                isFocused={true}
+                                className="mt-1 block w-3/4 bg-[#fafafa]/50 shadow-inner"
+                                onChange={(e) =>
+                                    setData("topic", e.target.value)
+                                }
+                            />
+                        </div>
+                        <InputError message={errors.topic} className="mt-2" />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                        <div className="flex gap-10 justify-start my-2">
+                            <InputLabel
+                                className="flex items-center justify-center w-1/4 text-lg"
+                                htmlFor="announcement"
+                                value="Announcement"
+                            />
+
+                            <textarea
+                                id="announcement"
+                                type="text"
+                                name="announcement"
+                                value={data.announcement}
+                                className="mt-1 block w-3/4  align-top   h-72 text-start  'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md  bg-[#fafafa]/50 shadow-inner "
+                                autoComplete="name"
+                                isFocused={true}
+                                onChange={(e) =>
+                                    setData("announcement", e.target.value)
+                                }
+                            ></textarea>
+                        </div>
+                        <InputError
+                            message={errors.announcement}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div className="flex items-center justify-end mt-4">
+                        {!data.id ? (
+                            <PrimaryButton
+                                className="ms-4 text-xl"
+                                disabled={processing}
+                                onClick={(e) => {
+                                    setModal(1);
+                                    submit(e);
+                                }}
+                            >
+                                Submit
+                            </PrimaryButton>
+                        ) : (
+                            <PrimaryButton
+                                className="ms-4"
+                                disabled={processing}
+                                onClick={(e) => {
+                                    setModal(2);
+                                    submit(e);
+                                }}
+                            >
+                                Edit
+                            </PrimaryButton>
+                        )}
+                    </div>
+                </form>
+            </div>
+
+            <div className="container flex flex-col gap-y-10 px-16">
+                <main>
+                    <div className="flex flex-col gap-3">
+                        {announcementData.map((e, index) => {
+                            return (
+                                <Dropdown>
+                                    <div
+                                        key={index}
+                                        className="flex text-xl gap-20    justify-evenly   action bg-[#fafafa]/25 rounded-xl py-2 shadow-inner"
+                                    >
+                                        <div className="flex  ps-5 items-center  w-1/2 justify-start text-center  ">
+                                            <span className="flex-2">
+                                                {index + 1}
+                                            </span>
+                                            <span className="flex-1">
+                                                {e.topic}
+                                            </span>
+                                            <span className="flex1">
+                                                {new Date(
+                                                    e.created_at
+                                                ).toLocaleString("id-ID", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                })}
+                                            </span>
+                                        </div>
+                                        <div className="action ">
+                                            <div className="action text-blue-600 flex gap-3">
+                                                <Dropdown.Trigger>
+                                                    <button
+                                                        type="button"
+                                                        className="flex gap-5   px-5 justify-between items-center hover:bg-[#fafafa]/50 cursor-pointer transition  action bg-[#fafafa]/25 rounded-xl py-2 shadow-inner"
+                                                    >
+                                                        Berita
+                                                    </button>
+                                                </Dropdown.Trigger>
+                                                <button
+                                                    type="button"
+                                                    className="flex gap-5   px-5 justify-between items-center hover:bg-[#fafafa]/50 cursor-pointer transition  action bg-[#fafafa]/25 rounded-xl py-2 shadow-inner"
+                                                    onClick={(event) => {
+                                                        updateAnnunce(
+                                                            event,
+                                                            e.id
+                                                        );
+                                                    }}
+                                                >
+                                                    update
+                                                </button>
+                                                <button
+                                                    onClick={(event) => {
+                                                        setModal(3);
+                                                        alertActive();
+                                                        setIdTarget(e.id);
+                                                    }}
+                                                    type="button"
+                                                    className="flex gap-5   px-5 justify-between items-center hover:bg-[#fafafa]/50 cursor-pointer transition  action bg-[#fafafa]/25 rounded-xl py-2 shadow-inner"
+                                                >
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Dropdown.Content
+                                        className="w-full"
+                                        contentClasses=" bg-white p-2 px-5  "
+                                    >
+                                        <div>
+                                            <div class="px-4 sm:px-0">
+                                                <h3 class="text-base font-semibold leading-7 text-gray-900">
+                                                    Pengumuman
+                                                </h3>
+                                                <p class="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
+                                                    Topic: {e.topic}
+                                                </p>
+                                            </div>
+                                            <div class="mt-6 border-t border-gray-100">
+                                                <dl class="divide-y divide-gray-100">
+                                                    <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                                                            {e.announcement}
+                                                        </dd>
+                                                    </div>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            );
+                        })}
+                    </div>
+                </main>
+            </div>
+            <ModalAlert alert={alert} closeModal={closeModal}>
+                {modal == 1 && (
+                    <div className="p-6 flex flex-col  items-center gap-5">
+                        <img src="/img/auth.png" alt="" />
+
+                        <h2 className="text-lg font-medium text-gray-900">
+                            Pengumuman Berhasil di Kirim
+                        </h2>
+
+                        <div className=" w-full text-center flex justify-center text-xl ">
+                            <PrimaryButton
+                                className=" w-full text-center flex justify-center text-xl py-5 "
+                                onClick={() => {
+                                    closeModal();
+                                }}
+                            >
+                                ok
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                )}
+                {modal == 2 && (
+                    <div className="p-6 flex flex-col  items-center gap-5">
+                        <img src="/img/auth.png" alt="" />
+
+                        <h2 className="text-lg font-medium text-gray-900">
+                            Pengumuman Berhasil di Update
+                        </h2>
+
+                        <div className=" w-full text-center flex justify-center text-xl ">
+                            <PrimaryButton
+                                className=" w-full text-center flex justify-center text-xl py-5 "
+                                onClick={() => {
+                                    closeModal();
+                                }}
+                            >
+                                ok
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                )}
+                {modal == 3 && (
+                    <div className="p-6 flex flex-col  items-center gap-5">
+                        <img src="/img/auth.png" alt="" />
+
+                        <h2 className="text-lg font-medium text-gray-900">
+                            apakah Ingin Hapus?
+                        </h2>
+
+                        <div className=" w-full text-center flex justify-center text-xl gap-3 ">
+                            <PrimaryButton
+                                onClick={closeModal}
+                                className="text-xl"
+                            >
+                                close
+                            </PrimaryButton>
+                            <PrimaryButton
+                                className="text-xl"
+                                onClick={(e) => {
+                                    submit(e);
+                                }}
+                            >
+                                Hapus
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                )}
+
+                {modal == 4 && (
+                    <div className="p-6">
+                        <h2 className="text-lg font-medium text-gray-900">
+                            Pengumuman Berasil Di hapus
+                        </h2>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <PrimaryButton onClick={closeModal}>
+                                close
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                )}
+            </ModalAlert>
+        </>
+    );
+};
+const ModalAlert = ({ alert, closeModal, children }) => {
+    return (
+        <Modal show={alert} onClose={closeModal}>
+            {children}
+        </Modal>
+    );
+};
+
 const KelolaLaporan = ({ active, dataLaporan }) => {
     const [idTarget, setIdTarget] = useState();
-    const { data, setData,patch } = useForm({
+    const [alertActive, setAlertActive] = useState(false);
+
+    const { data, setData, patch, reset } = useForm({
         topic: "",
         user: "",
         reportContent: "",
@@ -407,9 +793,27 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
         attachment: "",
         created_at: "",
     });
+
+    const closeModal = () => {
+        setAlertActive(false);
+
+        clearErrors();
+        reset();
+    };
     const getDetailLaporan = (id) => {
         const detail = dataLaporan.find((laporan) => laporan.id === id);
         return setData(detail); // detail akan berisi objek laporan yang ditemukan atau undefined jika tidak ada
+    };
+
+    const handleUpdate = (id, newStatus) => {
+        patch(route("report.update", id), {
+            onSuccess: () => {
+                setAlertActive(true);
+            },
+            onError: (error) => {
+                setAlertActive(true);
+            },
+        });
     };
 
     return (
@@ -461,15 +865,18 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
                                 <th className="text-start">
                                     Deskripsi Laporan
                                 </th>
-                                <tr>
-                                    Tawuran remaja di blok d mengakibatkan tiang
-                                    listrik tumbang
-                                </tr>
+                                <tr>{data.reportContent}</tr>
                             </table>
                             <table>
-                                <th className="text-start   ">Lampiran</th>
+                                <th className="text-start ">Lampiran</th>
                                 <tr>
-                                    <td>gamber</td>
+                                    <td>
+                                        <img
+                                            src={`/${data.attachment}`}
+                                            alt=""
+                                            className="h-auto w-52"
+                                        />
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -479,23 +886,71 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
                         <ul className="flex gap-6">
                             <li>
                                 <button
-                                    // onClick={() =>
-                                    //     patch(route("report.update", data.id), {
-                                    //         status: "proses",
-                                    //     })
-                                    // }
+                                    // Ubah menjadi "button"
+                                    onClick={(e) => {
+                                        patch(
+                                            route("report.update", {
+                                                id: data.id,
+                                                update: "proses",
+                                            }),
+                                            {
+                                                onSuccess: () => {
+                                                    setAlertActive(true);
+                                                },
+                                                onError: (error) => {
+                                                    setAlertActive(true);
+                                                },
+                                            }
+                                        );
+                                    }}
                                     className="py-2 px-5 bg-[#cc7914] hover:bg-[#cc7914]/50 transition shadow-md text-white rounded-xl"
                                 >
                                     proses
                                 </button>
                             </li>
                             <li>
-                                <button className="py-2 px-5 bg-primary hover:bg-primary/50 transition shadow-md text-white rounded-xl">
+                                <button
+                                    onClick={(e) => {
+                                        patch(
+                                            route("report.update", {
+                                                id: data.id,
+                                                update: "selesai",
+                                            }),
+                                            {
+                                                onSuccess: () => {
+                                                    setAlertActive(true);
+                                                },
+                                                onError: (error) => {
+                                                    setAlertActive(true);
+                                                },
+                                            }
+                                        );
+                                    }}
+                                    className="py-2 px-5 bg-primary hover:bg-primary/50 transition shadow-md text-white rounded-xl"
+                                >
                                     Selesai
                                 </button>
                             </li>
                             <li>
-                                <button className="py-2 px-5 bg-red-700 hover:bg-[#cc7914]/50 transition shadow-md text-white rounded-xl">
+                                <button
+                                    onClick={(e) => {
+                                        patch(
+                                            route("report.update", {
+                                                id: data.id,
+                                                update: "tolak",
+                                            }),
+                                            {
+                                                onSuccess: () => {
+                                                    setAlertActive(true);
+                                                },
+                                                onError: (error) => {
+                                                    setAlertActive(true);
+                                                },
+                                            }
+                                        );
+                                    }}
+                                    className="py-2 px-5 bg-red-700 hover:bg-[#cc7914]/50 transition shadow-md text-white rounded-xl"
+                                >
                                     tolak
                                 </button>
                             </li>
@@ -533,7 +988,7 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
                             return (
                                 <tr className="bg-white border-t border-gray-200">
                                     <td className="px-6 py-4  text-gray-700">
-                                        Sumanto
+                                        {e.user}
                                     </td>
                                     <td className="px-6 py-4  text-gray-700">
                                         {e.topic}
@@ -583,14 +1038,75 @@ const KelolaLaporan = ({ active, dataLaporan }) => {
                     </tbody>
                 </table>
             </div>
+            <Modal show={alertActive} onClose={closeModal}>
+                <div className="p-6 flex flex-col  items-center gap-5">
+                    <img src="/img/auth.png" alt="" />
+
+                    <h2 className="text-lg font-medium text-gray-900">
+                        Update Status Laporan
+                    </h2>
+
+                    <div className=" w-full text-center flex justify-center text-xl ">
+                        <PrimaryButton
+                            className=" w-full text-center flex justify-center text-xl py-5 "
+                            onClick={(e) => {
+                                // handleUpdate(data.id);
+                                setAlertActive(false);
+                                reset();
+                            }}
+                        >
+                            ok
+                        </PrimaryButton>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };
 
-const KelolaPengguna = ({ active }) => {
+const KelolaPengguna = ({ active, dataWarga }) => {
+    const {
+        data,
+        setData,
+        post,
+        delete: destroy,
+        processing,
+        errors,
+        reset,
+    } = useForm({
+        name: "",
+        email: "",
+        password: "",
+        handphone: "",
+        gender: "",
+    });
+
+    const [alertActive, setAlertActive] = useState(false);
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route("adminCreate"), {
+            onFinish: () => {
+                setAlertActive(true);
+                reset("password");
+            },
+        });
+    };
+    const closeModal = () => {
+        setAlertActive(false);
+
+        clearErrors();
+        reset();
+    };
     return (
         <>
             <div className="overflow-y-visible w-full  px-10 ">
+                <div className="w-full flex justify-between items-center my-3 p-5 ">
+                    <span className="text-4xl font-medium">Data User</span>
+                    <PrimaryButton onClick={() => setAlertActive(true)}>
+                        Tambah
+                    </PrimaryButton>
+                </div>
                 <table className="min-w-full bg-white border border-gray-200 rounded-lg text-3xl text-center overflow-y-auto">
                     <thead>
                         <tr className="bg-gray-100 text-center a">
@@ -605,29 +1121,155 @@ const KelolaPengguna = ({ active }) => {
                                 handphone
                             </th>
                             <th className="px-6 py-3   font-semibold text-gray-600">
-                                gender
+                                action
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="bg-white border-t border-gray-200">
-                            <td className="px-6 py-4  text-gray-700">
-                                Sumanto
-                            </td>
-                            <td className="px-6 py-4  text-gray-700">
-                                Kerusakan fasilitas
-                            </td>
-                            <td className="px-6 py-4  text-gray-700">
-                                02 Nov 2023
-                            </td>
+                        {dataWarga.map((e, index) => {
+                            return (
+                                <tr
+                                    key={index}
+                                    className="bg-white border-t border-gray-200"
+                                >
+                                    <td className="px-6 py-4  text-gray-700">
+                                        {e.name}
+                                    </td>
+                                    <td className="px-6 py-4  text-gray-700">
+                                        {e.gender}
+                                    </td>
+                                    <td className="px-6 py-4  text-gray-700">
+                                        {e.handphone}
+                                    </td>
 
-                            <td className="px-6 py-4  text-gray-700">
-                                <DangerButton> Hapus</DangerButton>
-                            </td>
-                        </tr>
+                                    <td className="px-6 py-4  text-gray-700">
+                                        <DangerButton
+                                            onClick={() =>
+                                                destroy(
+                                                    route("deleteAcc", e.id)
+                                                )
+                                            }
+                                        >
+                                            Hapus
+                                        </DangerButton>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
+            <Modal show={alertActive} onClose={closeModal}>
+                <form
+                    onSubmit={submit}
+                    className="flex flex-col gap-3 justify-center p-10 "
+                >
+                    <span className="text-center text-5xl font-extrabold ">
+                        Regsiter
+                    </span>
+                    <div>
+                        <InputLabel htmlFor="name" value="Nama" />
+
+                        <TextInput
+                            id="name"
+                            type="text"
+                            name="name"
+                            value={data.name}
+                            className="mt-1 block w-full min-h-14 text-2xl  rounded-xl"
+                            autoComplete="username"
+                            isFocused={true}
+                            onChange={(e) => setData("name", e.target.value)}
+                        />
+
+                        <InputError message={errors.name} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <InputLabel htmlFor="email" value="Email" />
+
+                        <TextInput
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                            autoComplete="username"
+                            isFocused={true}
+                            onChange={(e) => setData("email", e.target.value)}
+                        />
+
+                        <InputError message={errors.email} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <InputLabel htmlFor="gender" value="Jenis Kelamin" />
+                        <SelectInput
+                            id="gender"
+                            name="gender"
+                            value={data.gender}
+                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                            onChange={(e) => setData("gender", e.target.value)}
+                        >
+                            <option value="">Pilih Jenis Kelamin</option>
+                            <option value="Laki-Laki">Laki-Laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </SelectInput>
+                        <InputError message={errors.gender} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <InputLabel htmlFor="handphone" value="Handphone" />
+
+                        <TextInput
+                            id="handphone"
+                            type="text"
+                            name="handphone"
+                            value={data.handphone}
+                            className="mt-1 block w-full min-h-14 text-2xl rounded-xl"
+                            autoComplete="username"
+                            isFocused={true}
+                            onChange={(e) =>
+                                setData("handphone", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.handphone}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div className="mt-4">
+                        <InputLabel htmlFor="password" value="Password" />
+
+                        <TextInput
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            className="mt-1 block w-full min-h-14 text-2xl  rounded-xl"
+                            autoComplete="current-password"
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                        />
+
+                        <InputError
+                            message={errors.password}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-center ">
+                        <PrimaryButton
+                            className=" w-full text-center flex justify-center "
+                            disabled={processing}
+                        >
+                            Register
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </Modal>
         </>
     );
 };

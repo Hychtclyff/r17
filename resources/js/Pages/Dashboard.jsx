@@ -20,20 +20,14 @@ export default function Dashboard({ user }) {
     const confirmUserDeletion = () => {
         setAlertActive(true);
     };
-    const { data, setData, post, patch, errors, reset } = useForm({
+    const { data, setData, post, get, patch, errors, reset } = useForm({
         name: user.name,
         email: user.email,
         handphone: user.handphone,
         gender: user.gender,
     });
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2 className="800">Dashboard</h2>}>
             <Head title="Dashboard" />
             <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
                 <div className="relative flex min-h-screen flex-col items-center justify-start  selection:text-white bg-white">
@@ -65,16 +59,37 @@ export default function Dashboard({ user }) {
                                     </svg>
                                     <span>Kembali</span>
                                 </button>
-                                <div className="mt-4 flex items-center justify-center ">
+                                <div className="mt-4 flex items-center justify-end gap-1 ">
                                     <PrimaryButton
                                         onClick={() => post(route("logout"))}
                                         method="post"
                                         as="button"
+                                        text-xl
+                                        font-semibold
+                                        leading-tight
+                                        text-gray-
                                         className="  text-center flex justify-center text-xl "
                                         // disabled={processing}
                                     >
                                         Log Out
                                     </PrimaryButton>
+                                    {user.role === "admin" && (
+                                        <PrimaryButton
+                                            onClick={() =>
+                                                get(route("admin.index"))
+                                            }
+                                            method="post"
+                                            as="button"
+                                            text-xl
+                                            font-semibold
+                                            leading-tight
+                                            text-gray-
+                                            className="  text-center flex justify-center text-xl "
+                                            // disabled={processing}
+                                        >
+                                            admin
+                                        </PrimaryButton>
+                                    )}
                                 </div>
                             </div>
                             <div className="flex  lg:col-start-2 lg:justify-center lg:items-center gap text-4xl  text-hijau_utama   bg-cover bg-no-repeat  ">
@@ -84,7 +99,7 @@ export default function Dashboard({ user }) {
                                         alt=""
                                         className="h-60  border-8 border-hijau_utama w-60  rounded-full"
                                     />
-                                    <a href>Edit Foto</a>
+                                    <a href>Edit Profile</a>
                                 </div>
                                 <div className=" left-0"></div>
                             </div>

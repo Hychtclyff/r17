@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,8 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+
+
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
@@ -61,4 +64,31 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function destroyAdmin($id): RedirectResponse
+{
+    // Pastikan hanya admin yang bisa menghapus akun
+    if (Auth::user()->role !== 'admin') {
+        return back()->withErrors(['access' => 'Anda tidak memiliki izin untuk menghapus akun ini.']);
+    }
+
+    // Temukan pengguna berdasarkan ID
+    $user = User::findOrFail($id);
+
+    // Logout pengguna jika sedang login
+    if (Auth::id() === $user->id) {
+        Auth::logout();
+    }
+
+    // Hapus pengguna dari database
+    $user->delete();
+
+    // Invalidasi sesi pengguna yang dihapus (hanya jika pengguna yang dihapus sedang login)
+    if (Auth::id() === $user->id) {
+        session()->invalidate();
+        session()->regenerateToken();
+    }
+
+    return back();
+}
 }
