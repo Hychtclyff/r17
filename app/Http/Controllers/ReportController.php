@@ -51,8 +51,8 @@ class ReportController extends Controller
         if ($request->hasFile('attachment')) {
             $attachment = $request->file('attachment');
             $attachmentName = time() . '_attachment.' . $attachment->extension(); // Mengatur nama file
-            $attachment->move(public_path('img/lampiran'), $attachmentName); // Pindahkan file ke folder yang diinginkan
-            $validatedData['attachment'] = 'img/lampiran/' . $attachmentName; // Simpan path di database
+            $attachment->move(public_path('/img/lampiran'), $attachmentName); // Pindahkan file ke folder yang diinginkan
+            $validatedData['attachment'] = '/img/lampiran/' . $attachmentName; // Simpan path di database
         }
 
         // Membuat laporan baru
